@@ -8,6 +8,7 @@ import pickle
 from base64 import b64encode as encriptar
 from base64 import b64decode as desencriptar
 from time import time
+import string
 
 if not pygame.mixer: print ("Jogo sem som, falta pygame.mixer")
 
@@ -442,6 +443,9 @@ class Pacboy(pygame.sprite.Sprite, Colisao):
 	def move(self, direcao):
 		#if (self.direcao != direcao) and (jogo_corrente.moveu_cenario):
 		#	self.direcao = direcao
+		print("Posição do personagem: x: %d y: %d" %( self.rect.x/(len(fase[1]["mapa"][0])), self.rect.y/(len(fase[1]["mapa"]))))
+
+		
 		if (self.rect.x % 20 == 0 and self.rect.y % 20 == 0): 
 			self.direcao = direcao
 		else:
@@ -708,6 +712,50 @@ def pontuacao():
 		pacboy.tempo_com_escudo = time() - pacboy.tempo_com_escudo
 		tela.blit(icone_escudo, ((275), 0))
 
+def criaListaDeArestas(mapa):
+	tamanhoY = len(mapa)
+	tamanhoX = len(mapa[0])
+
+	#print "Iniciando a transformacao de uma matriz " + str(tamanhoX) + " por " + str(tamanhoY) + " em uma lista de arestas\n"
+	
+	#print "Normalizando baus,escudos e portais em espacos\n"
+	
+	for y in xrange(0,tamanhoY):
+		mapa[y] = string.replace(mapa[y],"O","E")
+		mapa[y] = string.replace(mapa[y],"C","E")
+		mapa[y] = string.replace(mapa[y],"S","E")
+	
+	print "...Transformando...\n"
+	
+	dict = {"Dic":"Dic"}
+
+	for y in xrange(0,tamanhoY):
+		for x in xrange(0,tamanhoX):
+			if (mapa[y][x]=="E"):
+				listConexoes = []
+				if (y!=0):
+					if (mapa[y-1][x]=="E"):
+						listConexoes.append(str(y-1)+","+str(x))
+				if (y!=tamanhoY-1):
+					if (mapa[y+1][x]=="E"):
+						listConexoes.append(str(y+1)+","+str(x))
+				if (x!=0):
+					if (mapa[y][x-1]=="E"):
+						listConexoes.append(str(y)+","+str(x-1))
+				if (x!=tamanhoX-1):
+					if (mapa[y][x+1]=="E"):
+						listConexoes.append(str(y)+","+str(x+1))
+				dict[str(y)+","+str(x)] = listConexoes
+	return dict
+
+def dfs(graph, start):
+    visited, stack = set(), [start]
+    while stack:
+        vertex = stack.pop()
+        if vertex not in visited:
+            visited.add(vertex)
+            stack.extend(graph[vertex] - visited)
+    return visited
 
 ################################################
 ####		Inicializar o Jogo
@@ -778,6 +826,7 @@ jogo_corrente.criar_fase()
 TELA_CHEIA = False
 jogando = True
 fps = []
+criaListaDeArestas(fase[1]["mapa"])
 
 while jogando:
 	jogo_corrente.key = pygame.key.get_pressed()
