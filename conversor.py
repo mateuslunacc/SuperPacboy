@@ -1,5 +1,11 @@
 import string
 
+posPlayer = [0,0]
+posFantasma1 = [0,0]
+posFantasma2 = [0,0]
+posFantasma3 = [0,0]
+posFantasma4 = [0,0]
+
 def criaListaDeArestas(mapa):
 	tamanhoY = len(mapa)
 	tamanhoX = len(mapa[0])
@@ -36,21 +42,50 @@ def criaListaDeArestas(mapa):
 				dict[str(y)+","+str(x)] = listConexoes
 	return dict
 
-mapaRecebido = [
-"PPPPPPPPPXXPPPPPPPPP",
-"PPEEEEEEEEEEEEEEEEPP",
-"PECPPPEPPPPPPEPPPCEP",
-"PEPPSEEEEEEEEEESPPEP",
-"PEEPEPPPEPPEPPPEPEEP",
-"PPEEEEPEEEEEEPEEEEPP",
-"PPPEPEPEPPPPEPEPEPPP",
-"OEEEPEPEEEEEEPEPEEEO",
-"PPPEPEPPEPPEPPEPEPPP",
-"PPEEEEEEEEEEEEEEEEPP",
-"PEEPEPPPEPPEPPPEPEEP",
-"PEPPEEEEEPPEEEEEPPEP",
-"PECPPPEPEPPEPEPPPCEP",
-"PPEEEEEPEEEEPEEEEEPP",
-"PPPPPPPPPPPPPPPPPPPP"]
-	
-print criaListaDeArestas(mapaRecebido)
+
+#coord eh a coordenada da entidade, uma string "x,y"
+#pixX e pixY sao o tamanho x e y do mapa
+#blocksX e blocksY sao a quantidade de blocos em cada eixo
+#O resultado eh um array com a coordenada em pixel
+#do objeto
+def getPosition(coord,pixX,pixY, blocksX,blocksY):
+	coord = coord.split(",")
+	posX = (pixX/blocksX)*float(coord[0])
+	posY = (pixY/blocksY)*float(coord[1])
+	return [posX,posY] 
+
+#retorna a posicao de uma entidade
+def getPositionEntidade(entidade):
+	if entidade == "Player":
+		return posPlayer
+	elif entidade == "Fantasma1":
+		return posFantasma1
+	elif entidade == "Fantasma2":
+		return posFantasma2
+	elif entidade == "Fantasma3":
+		return posFantasma3
+	elif entidade == "Fantasma4":
+		return posFantasma4
+
+#seta a posicao de uma entidade
+#pos eh uma string "x,y"
+def setPositionEntidade(entidade, pos):
+	if entidade == "Player":
+		posPlayer = pos
+	elif entidade == "Fantasma1":
+		posFantasma1 = pos
+	elif entidade == "Fantasma2":
+		posFantasma2 = pos
+	elif entidade == "Fantasma3":
+		posFantasma3 = pos
+	elif entidade == "Fantasma4":
+		posFantasma4 = pos
+
+#currentPos eh a coordenada da entidade, uma string "x,y"
+#listOfEdgesDict eh a lista de arestas retornada pela funcao
+#criaListaDeArestas(mapa)		
+def getPossiblePaths(currentPos, listOfEdgesDict):
+	if listOfEdgesDict.has_key(currentPos):
+		return listOfEdgesDict[currentPos]
+		
+
