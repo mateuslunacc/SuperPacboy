@@ -1,10 +1,23 @@
 import string
 
-posPlayer = [0,0]
-posFantasma1 = [0,0]
-posFantasma2 = [0,0]
-posFantasma3 = [0,0]
-posFantasma4 = [0,0]
+mapa = [
+"PPPPPPPPPPPPXXPPPPPPPPPPPP",
+"PCEEPEEEPPEEEEEEPPEEEPEECP",
+"PEPEEEPEEEEPPPPEEEEPEEEPEP",
+"PEEEPEEPEPEEEEEEPEPEEPEEEP",
+"PPEPPPEPEPEPPPPEPEPEPPPEPP",
+"PPEEPEEEEEEEPPEEEEEEEPEEPP",
+"PPPESEPPPPPEPPEPPPPPESEPPP",
+"PPEEPEEEPEEEPPEEEPEEEPEEPP",
+"OEEPPPPEEEPEEEEPEEEPPPPEEO",
+"PPEEPEEEPEEEPPEEEPEEEPEEPP",
+"PPPEEEPPPPPEEEEPPPPPEEEPPP",
+"PPEEPEEPEEEEPPEEEEPEEPEEPP",
+"PPEPPPEPEPPPPPPPPEPEPPPEPP",
+"PEEEPEEEEEPEEEEPEEEEEPEEEP",
+"PEPEEEPPPEEEPPEEEPPPEEEPEP",
+"PCEEPEEEEEPPPPPPEEEEEPEECP",
+"PPPPPPPPPPPPPPPPPPPPPPPPPP"]
 
 def criaListaDeArestas(mapa):
 	tamanhoY = len(mapa)
@@ -88,4 +101,63 @@ def getPossiblePaths(currentPos, listOfEdgesDict):
 	if listOfEdgesDict.has_key(currentPos):
 		return listOfEdgesDict[currentPos]
 		
+listaDeArestas = criaListaDeArestas(mapa)
 
+#SETA QUANTIDADE DE VITORIAS PARA CADA FANTASMA
+fant1Vit = 0
+fant2Vit = 0
+fant3Vit = 0
+fant4Vit = 0
+
+#POE O WHILE DENTRO DE UM FOR COM O NUMERO DE VEZES
+#QUE VOCE QUER RODAR O EXPERIMENTO
+
+jogando = True
+
+while(jogando):
+	
+	#SETA POSICAO DO JOGADOR E DOS FANTASMAS EM CIMA DO MAPA
+	#USA A POSICAO RETORNADA PELO ALGORITMO
+	#EXEMPLO: posFantasma1 = algoritmoX.proximoMovimento()
+	#Ou algo semelhante. O importante eh calcular qual o proximo movimento
+	#e setar aqui
+	#eh possivel recuperar a posicao atual com getPositionEntidade()
+	#e setar a posical com setPositionEntidade()
+	#e possivel pegar as proximas posicoes possiveis com getPossiblePaths()
+	posPlayer = [1,1]
+	posFantasma1 = [1,2]
+	posFantasma2 = [1,3]
+	posFantasma3 = [1,5]
+	posFantasma4 = [1,6]
+	
+	#MOSTRA MAPA
+	
+	print mapa
+	
+	#MOSTRA POSICOES NOVAS
+	#OU SE QUISER VOCE PODE CRIAR UM MAPA NOVO TEMPORARIO
+	#E COLOCAR AS ENTIDADES LA COMO MARCACOES E MOSTRAR
+	#GRAFICAMENTE AS POSICOES EM VEZ DE IMPRIMIR
+	print "JOGADOR: " + str(posPlayer)
+	print "FANT1: " +  str(posFantasma1)
+	print "FANT2: " +  str(posFantasma2)
+	print "FANT3: " +  str(posFantasma3)
+	print "FANT4: " +  str(posFantasma4)
+	
+	#TESTA CONDICAO DE VITORIA
+	#SE UM OU MAIS DE UM FANTASMA ATINGIRAM
+	#O JOGADOR. SETE A CONDICAO DE PARADA
+	#E AUMENTE O NUMERO DE VITORIAS DO(S)
+	#FANTASMA(S)
+	if (posPlayer == posFantasma1):
+		fant1Vit+=1
+		jogando = False
+	if (posPlayer == posFantasma1):
+		fant2Vit+=1
+		jogando = False
+	if (posPlayer == posFantasma1):
+		fant3Vit+=1
+		jogando = False
+	if (posPlayer == posFantasma1):
+		fant4Vit+=1
+		jogando = False
