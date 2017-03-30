@@ -5,6 +5,7 @@ from time import sleep
 import sys
 
 from a_star import SimpleGraph, reconstruct_path, a_star_search
+from bfs import bfs
 from dfs import find_path
 
 mapa = [
@@ -75,15 +76,6 @@ def getPosition(coord, pixX, pixY, blocksX, blocksY):
     posX = (pixX / blocksX) * float(coord[0])
     posY = (pixY / blocksY) * float(coord[1])
     return [posX, posY]
-
-
-# posicoes iniciais
-posPlayer = [15, 7]
-posFantasma1 = [15, 23]
-posFantasma2 = [1, 3]
-posFantasma3 = [1, 5]
-posFantasma4 = [1, 6]
-
 
 # retorna a posicao de uma entidade
 def getPositionEntidade(entidade):
@@ -172,27 +164,34 @@ graph = SimpleGraph()
 graph.edges = criaListaDeArestas(mapa)
 
 
-def caminho_a_estrela(graph, posicaoFantasma, posicaoPlayer):
+def caminho_a_estrela(graph, posicaoFantasma, posicaoPlayer, tie_breaker):
     came_from, cost_so_far = a_star_search(graph, str(posicaoFantasma[0]) + "," + str(posicaoFantasma[1]),
-                                           str(posicaoPlayer[0]) + "," + str(posicaoPlayer[1]))
+                                           str(posicaoPlayer[0]) + "," + str(posicaoPlayer[1]), tie_breaker)
 
     caminho = reconstruct_path(came_from, str(posicaoFantasma[0]) + "," + str(posicaoFantasma[1]),
                                str(posicaoPlayer[0]) + "," + str(posicaoPlayer[1]))
     caminho = caminho[2:len(caminho)]
-    return caminho, cost_so_far
+
+    return caminho
 
 
 def caminho_dfs(graph, posicaoFantasma, posicaoPlayer):
-    caminho = find_path( graph.edges, str(posicaoFantasma[0]) + "," + str(posicaoFantasma[1]),
+    caminho = find_path(graph.edges, str(posicaoFantasma[0]) + "," + str(posicaoFantasma[1]),
                   str(posicaoPlayer[0]) + "," + str(posicaoPlayer[1]), [])
     return caminho[1:len(caminho)]
 
+def caminho_bfs(graph, posicaoFantasma, posicaoPlayer):
+    caminho = bfs(graph.edges, str(posicaoFantasma[0]) + "," + str(posicaoFantasma[1]), [])
+    return caminho
+
 #5 EXPERIMENTOS
-for experimentos in range(0, 4):
+for experimentos in range(0, 5):
 
     #ESCOLHE O ALGORITMO, MELHORAR COMO FAZER ESSA ESCOLHA
     ALGORITMO_AESTRELA = True
+    tie_breaker = False
     ALGORITMO_DFS = False
+    ALGORITMO_BFS = False
 
     #coloca o usuario numa posicao random valida
     playerRandom = graph.edges.keys()[randint(0, len(graph.edges.keys()))]
@@ -219,22 +218,21 @@ for experimentos in range(0, 4):
     posicaoFantasma = getPositionEntidade("Fantasma1")
 
     if (ALGORITMO_DFS):
-        counter = 0
         caminho = caminho_dfs(graph, posicaoFantasma, posicaoPlayer)
 
+    if (ALGORITMO_BFS):
+        caminho = caminho_bfs(graph, posicaoFantasma, posicaoPlayer)
 
     while (jogando):
-
-
 
         if (ALGORITMO_AESTRELA):
             # seta a posicao inicial do fantasma e do player
 
             posicaoPlayer = getPositionEntidade("Player")
             posicaoFantasma = getPositionEntidade("Fantasma1")
-            caminho, custo = caminho_a_estrela(graph, posicaoFantasma, posicaoPlayer)
-        passos += 1
+            caminho, custo = caminho_a_estrela(graph, posicaoFantasma, posicaoPlayer,tie_breaker)
 
+        passos += 1
 
         # TESTA CONDICAO DE VITORIA
         # SE UM OU MAIS DE UM FANTASMA ATINGIRAM
@@ -257,8 +255,9 @@ for experimentos in range(0, 4):
             if (ALGORITMO_AESTRELA):
                 setPositionEntidade("Fantasma1", caminho[0].split(","))
 
-            if (ALGORITMO_DFS):
-                setPositionEntidade("Fantasma1", caminho[0].split(","))
+            elif (ALGORITMO_DFS or ALGORITMO_BFS):
+                setPositionEntidade("Fantasma1", [int(caminho[0].split(",")[0]), int(caminho[0].split(",")[1])])
+
                 caminho.pop(0)
         else:
             jogando = False
@@ -283,7 +282,7 @@ for experimentos in range(0, 4):
         #printa o caminho baseado na posicao atual do fantasma
         # print caminho
 
-        sleep(0.8)
+        sleep(0.1)
 
     print "Completou em: %d passos" % passos
     print "\n\n\n"

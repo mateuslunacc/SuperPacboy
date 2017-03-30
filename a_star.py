@@ -75,16 +75,19 @@ def reconstruct_path(came_from, start, goal):
     return path
 
 #mudar euristica se possivel
-def heuristic(a, b):
+def heuristic(a, b, tie_breaker):
     a = (int(a[0]), int(a[-1]))
     b = (int(a[0]), int(b[-1]))
 
     (x1, y1) = a
     (x2, y2) = b
-    return abs(x1 - x2) + abs(y1 - y2)
+    if (tie_breaker):
+        return (abs(x1 - x2) + abs(y1 - y2)) * (1.0 + 1/1000)
+    else:
+        return abs(x1 - x2) + abs(y1 - y2)
 
 
-def a_star_search(graph, start, goal):
+def a_star_search(graph, start, goal, tie_breaker):
     frontier = PriorityQueue()
     frontier.put(start, 0)
     came_from = {}
@@ -102,7 +105,7 @@ def a_star_search(graph, start, goal):
             new_cost = cost_so_far[current] + 1
             if next not in cost_so_far or new_cost < cost_so_far[next]:
                 cost_so_far[next] = new_cost
-                priority = new_cost + heuristic(goal, next)
+                priority = new_cost + heuristic(goal, next, tie_breaker)
                 frontier.put(next, priority)
                 came_from[next] = current
 
