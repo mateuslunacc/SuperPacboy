@@ -74,7 +74,7 @@ def reconstruct_path(came_from, start, goal):
     path.reverse()  # optional
     return path
 
-#mudar euristica se possível
+#mudar euristica se possivel
 def heuristic(a, b):
     a = (int(a[0]), int(a[-1]))
     b = (int(a[0]), int(b[-1]))
