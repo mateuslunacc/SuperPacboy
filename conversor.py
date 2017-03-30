@@ -230,7 +230,7 @@ for experimentos in range(0, 5):
 
             posicaoPlayer = getPositionEntidade("Player")
             posicaoFantasma = getPositionEntidade("Fantasma1")
-            caminho, custo = caminho_a_estrela(graph, posicaoFantasma, posicaoPlayer,tie_breaker)
+            caminho = caminho_a_estrela(graph, posicaoFantasma, posicaoPlayer,tie_breaker)
 
         passos += 1
 
