@@ -226,7 +226,10 @@ for experimentos in range(0, 5):
     mapaPrint = limpa_mapa()
 
     print "Player em nova posicao: " + str(playerRandomPosition)
-    print "Fantasma em nova posicao: " + str(posFantasma1)
+    print "A* em nova posicao: " + str(posFantasma1)
+    print "BFS em nova posicao: " + str(posFantasma2)
+    print "DFS em nova posicao: " + str(posFantasma3)
+
     sleep(5)
     passos = -1
 
@@ -236,9 +239,11 @@ for experimentos in range(0, 5):
     posicaoFantasma2 = getPositionEntidade("Fantasma2")
     posicaoFantasma3 = getPositionEntidade("Fantasma3")
 
-    caminhoDFS = caminho_dfs(graph, posicaoFantasma2, posicaoPlayer)
+    caminhoBFS = caminho_bfs(graph, posicaoFantasma2, posicaoPlayer)
 
-    caminhoBFS = caminho_bfs(graph, posicaoFantasma3, posicaoPlayer)
+
+    caminhoDFS = caminho_dfs(graph, posicaoFantasma3, posicaoPlayer)
+
 
     caminhoAestrela = caminho_a_estrela(graph, posFantasma1, posicaoPlayer, tie_breaker)
 

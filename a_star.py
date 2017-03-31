@@ -87,7 +87,6 @@ def heuristic(a, b, tie_breaker):
     if (tie_breaker):
         return (abs(x1 - x2) + abs(y1 - y2)) * (1.0 + 1/1000)
     else:
-        print abs(x1 - x2) + abs(y1 - y2)
         return abs(x1 - x2) + abs(y1 - y2)
 
 
