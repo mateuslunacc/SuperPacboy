@@ -23,8 +23,8 @@ mapa = [
     "PPEEPEEPEEEEPPEEEEPEEPEEPP",
     "PPEPPPEPEPPPPPPPPEPEPPPEPP",
     "PEEEPEEEEEPEEEEPEEEEEPEEEP",
-    "PEPEEEPPPEEEPPEEEPPPEEEPEP",
-    "PCEEPEEEEEPPPPPPEEEEEPEECP",
+    "PEPEEEPPPEEEPPEPEPPPPPPPPP",
+    "PCEEPEEEEEPPPPPPEEEEEEEEEP",
     "PPPPPPPPPPPPPPPPPPPPPPPPPP"]
 
 
@@ -44,7 +44,7 @@ def criaListaDeArestas(mapa):
 
     print "...Transformando...\n"
 
-    dict = {"Dic": "Dic"}
+    dict = {"":""}
 
     for y in xrange(0, tamanhoY):
         for x in xrange(0, tamanhoX):
@@ -88,6 +88,7 @@ def getPositionEntidade(entidade):
     elif entidade == "Fantasma3":
         return posFantasma3
     elif entidade == "Fantasma4":
+        global posFantasma4
         return posFantasma4
 
 
@@ -101,8 +102,10 @@ def setPositionEntidade(entidade, pos):
         global posFantasma1
         posFantasma1 = pos
     elif entidade == "Fantasma2":
+        global posFantasma2
         posFantasma2 = pos
     elif entidade == "Fantasma3":
+        global posFantasma3
         posFantasma3 = pos
     elif entidade == "Fantasma4":
         posFantasma4 = pos
@@ -132,23 +135,23 @@ jogando = True
 
 def limpa_mapa():
     mapaPrint = [
-        "PPPPPPPPPPPPXXPPPPPPPPPPPP",
-        "PCEEPEEEPPEEEEEEPPEEEPEECP",
-        "PEPEEEPEEEEPPPPEEEEPEEEPEP",
-        "PEEEPEEPEPEEEEEEPEPEEPEEEP",
-        "PPEPPPEPEPEPPPPEPEPEPPPEPP",
-        "PPEEPEEEEEEEPPEEEEEEEPEEPP",
-        "PPPESEPPPPPEPPEPPPPPESEPPP",
-        "PPEEPEEEPEEEPPEEEPEEEPEEPP",
-        "OEEPPPPEEEPEEEEPEEEPPPPEEO",
-        "PPEEPEEEPEEEPPEEEPEEEPEEPP",
-        "PPPEEEPPPPPEEEEPPPPPEEEPPP",
-        "PPEEPEEPEEEEPPEEEEPEEPEEPP",
-        "PPEPPPEPEPPPPPPPPEPEPPPEPP",
-        "PEEEPEEEEEPEEEEPEEEEEPEEEP",
-        "PEPEEEPPPEEEPPEEEPPPEEEPEP",
-        "PCEEPEEEEEPPPPPPEEEEEPEECP",
-        "PPPPPPPPPPPPPPPPPPPPPPPPPP"]
+    "PPPPPPPPPPPPXXPPPPPPPPPPPP",
+    "PCEEPEEEPPEEEEEEPPEEEPEECP",
+    "PEPEEEPEEEEPPPPEEEEPEEEPEP",
+    "PEEEPEEPEPEEEEEEPEPEEPEEEP",
+    "PPEPPPEPEPEPPPPEPEPEPPPEPP",
+    "PPEEPEEEEEEEPPEEEEEEEPEEPP",
+    "PPPESEPPPPPEPPEPPPPPESEPPP",
+    "PPEEPEEEPEEEPPEEEPEEEPEEPP",
+    "OEEPPPPEEEPEEEEPEEEPPPPEEO",
+    "PPEEPEEEPEEEPPEEEPEEEPEEPP",
+    "PPPEEEPPPPPEEEEPPPPPEEEPPP",
+    "PPEEPEEPEEEEPPEEEEPEEPEEPP",
+    "PPEPPPEPEPPPPPPPPEPEPPPEPP",
+    "PEEEPEEEEEPEEEEPEEEEEPEEEP",
+    "PEPEEEPPPEEEPPEPEPPPPPPPPP",
+    "PCEEPEEEEEPPPPPPEEEEEEEEEP",
+    "PPPPPPPPPPPPPPPPPPPPPPPPPP"]
 
     for y in xrange(0, len(mapa)):
         mapaPrint[y] = string.replace(mapaPrint[y], "P", "#")
@@ -165,14 +168,15 @@ graph.edges = criaListaDeArestas(mapa)
 
 
 def caminho_a_estrela(graph, posicaoFantasma, posicaoPlayer, tie_breaker):
-    came_from, cost_so_far = a_star_search(graph, str(posicaoFantasma[0]) + "," + str(posicaoFantasma[1]),
+
+    came_from, lista = a_star_search(graph, str(posicaoFantasma[0]) + "," + str(posicaoFantasma[1]),
                                            str(posicaoPlayer[0]) + "," + str(posicaoPlayer[1]), tie_breaker)
 
     caminho = reconstruct_path(came_from, str(posicaoFantasma[0]) + "," + str(posicaoFantasma[1]),
                                str(posicaoPlayer[0]) + "," + str(posicaoPlayer[1]))
     caminho = caminho[2:len(caminho)]
-
-    return caminho
+    lista = uniquify_list(lista)
+    return lista
 
 
 def caminho_dfs(graph, posicaoFantasma, posicaoPlayer):
@@ -184,14 +188,26 @@ def caminho_bfs(graph, posicaoFantasma, posicaoPlayer):
     caminho = bfs(graph.edges, str(posicaoFantasma[0]) + "," + str(posicaoFantasma[1]), [])
     return caminho
 
+def uniquify_list(seq, idfun=None):
+   if idfun is None:
+       def idfun(x): return x
+   seen = {}
+   result = []
+   for item in seq:
+       marker = idfun(item)
+       # in old Python versions:
+       # if seen.has_key(marker)
+       # but in new ones:
+       if marker in seen: continue
+       seen[marker] = 1
+       result.append(item)
+   return result
+
 #5 EXPERIMENTOS
 for experimentos in range(0, 5):
 
     #ESCOLHE O ALGORITMO, MELHORAR COMO FAZER ESSA ESCOLHA
-    ALGORITMO_AESTRELA = True
     tie_breaker = False
-    ALGORITMO_DFS = False
-    ALGORITMO_BFS = False
 
     #coloca o usuario numa posicao random valida
     playerRandom = graph.edges.keys()[randint(0, len(graph.edges.keys()))]
@@ -200,10 +216,11 @@ for experimentos in range(0, 5):
     setPositionEntidade("Player", playerRandomPosition)
 
     #coloca o fantasma numa posicao random valida
-    fantasmaRandom = graph.edges.keys()[randint(0, len(graph.edges.keys()))]
-    fantasmaRandomString = fantasmaRandom.split(",")
-    fantasmaRandomPosition = [int(fantasmaRandomString[0]), int(fantasmaRandomString[1])]
-    setPositionEntidade("Fantasma1", fantasmaRandomPosition)
+    for i in range(1,4):
+        fantasmaRandom = graph.edges.keys()[randint(0, len(graph.edges.keys()))]
+        fantasmaRandomString = fantasmaRandom.split(",")
+        fantasmaRandomPosition = [int(fantasmaRandomString[0]), int(fantasmaRandomString[1])]
+        setPositionEntidade("Fantasma"+str(i), fantasmaRandomPosition)
 
     #limpa o mapa para o proximo experimento
     mapaPrint = limpa_mapa()
@@ -215,22 +232,17 @@ for experimentos in range(0, 5):
 
 
     posicaoPlayer = getPositionEntidade("Player")
-    posicaoFantasma = getPositionEntidade("Fantasma1")
+    posicaoFantasma1 = getPositionEntidade("Fantasma1")
+    posicaoFantasma2 = getPositionEntidade("Fantasma2")
+    posicaoFantasma3 = getPositionEntidade("Fantasma3")
 
-    if (ALGORITMO_DFS):
-        caminho = caminho_dfs(graph, posicaoFantasma, posicaoPlayer)
+    caminhoDFS = caminho_dfs(graph, posicaoFantasma2, posicaoPlayer)
 
-    if (ALGORITMO_BFS):
-        caminho = caminho_bfs(graph, posicaoFantasma, posicaoPlayer)
+    caminhoBFS = caminho_bfs(graph, posicaoFantasma3, posicaoPlayer)
+
+    caminhoAestrela = caminho_a_estrela(graph, posFantasma1, posicaoPlayer, tie_breaker)
 
     while (jogando):
-
-        if (ALGORITMO_AESTRELA):
-            # seta a posicao inicial do fantasma e do player
-
-            posicaoPlayer = getPositionEntidade("Player")
-            posicaoFantasma = getPositionEntidade("Fantasma1")
-            caminho = caminho_a_estrela(graph, posicaoFantasma, posicaoPlayer,tie_breaker)
 
         passos += 1
 
@@ -240,25 +252,33 @@ for experimentos in range(0, 5):
         # E AUMENTE O NUMERO DE VITORIAS DO(S)
         # FANTASMA(S)
         if (posPlayer == posFantasma1):
+            vencedor = "A* ganhou"
             fant1Vit += 1
             jogando = False
-        if (posPlayer == posFantasma1):
+        if (posPlayer == posFantasma2):
+            vencedor = "BFS ganhou"
             fant2Vit += 1
             jogando = False
-        if (posPlayer == posFantasma1):
+        if (posPlayer == posFantasma3):
+            vencedor = "DFS ganhou"
             fant3Vit += 1
             jogando = False
         if (posPlayer == posFantasma1):
             fant4Vit += 1
             jogando = False
-        if (len(caminho) > 0):
-            if (ALGORITMO_AESTRELA):
-                setPositionEntidade("Fantasma1", caminho[0].split(","))
-
-            elif (ALGORITMO_DFS or ALGORITMO_BFS):
-                setPositionEntidade("Fantasma1", [int(caminho[0].split(",")[0]), int(caminho[0].split(",")[1])])
-
-                caminho.pop(0)
+        if (len(caminhoAestrela) <= 0):
+            vencedor = "A* ganhou"
+        if (len(caminhoDFS) <= 0):
+            vencedor = "DSF ganhou"
+        if (len(caminhoBFS) <= 0):
+            vencedor = "BSF ganhou"
+        if (len(caminhoAestrela) > 0) and (len(caminhoBFS) > 0) and (len(caminhoDFS) > 0):
+            setPositionEntidade("Fantasma1", caminhoAestrela[0].split(","))
+            setPositionEntidade("Fantasma2", [int(caminhoBFS[0].split(",")[0]), int(caminhoBFS[0].split(",")[1])])
+            setPositionEntidade("Fantasma3", [int(caminhoDFS[0].split(",")[0]), int(caminhoDFS[0].split(",")[1])])
+            caminhoAestrela.pop(0)
+            caminhoBFS.pop(0)
+            caminhoDFS.pop(0)
         else:
             jogando = False
 
@@ -268,10 +288,20 @@ for experimentos in range(0, 5):
         linha = "".join(linha)
         mapaPrint[posicaoPlayer[0]] = linha
 
-        linhaFantasma = list(mapaPrint[int(posFantasma1[0])])
-        linhaFantasma[int(posFantasma1[1])] = "F"
-        linhaFantasma = "".join(linhaFantasma)
-        mapaPrint[int(posFantasma1[0])] = linhaFantasma
+        linhaFantasma1 = list(mapaPrint[int(posFantasma1[0])])
+        linhaFantasma1[int(posFantasma1[1])] = "A"
+        linhaFantasma1 = "".join(linhaFantasma1)
+        mapaPrint[int(posFantasma1[0])] = linhaFantasma1
+
+        linhaFantasma2 = list(mapaPrint[int(posFantasma2[0])])
+        linhaFantasma2[int(posFantasma2[1])] = "B"
+        linhaFantasma2 = "".join(linhaFantasma2)
+        mapaPrint[int(posFantasma2[0])] = linhaFantasma2
+
+        linhaFantasma3 = list(mapaPrint[int(posFantasma3[0])])
+        linhaFantasma3[int(posFantasma3[1])] = "D"
+        linhaFantasma3 = "".join(linhaFantasma3)
+        mapaPrint[int(posFantasma3[0])] = linhaFantasma3
 
         #mostra o mapa com a trilha de passos do fantasma
         mapaRun = ""
@@ -282,9 +312,10 @@ for experimentos in range(0, 5):
         #printa o caminho baseado na posicao atual do fantasma
         # print caminho
 
-        sleep(0.1)
+        sleep(.8)
 
     print "Completou em: %d passos" % passos
+    print "Vencedor: %s" % vencedor
     print "\n\n\n"
     jogando = True
 
